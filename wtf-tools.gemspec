@@ -11,7 +11,7 @@ and profiling Ruby on Rails projects.
 EOF
 
   s.files           = Dir['{example/*,lib/**/*,test/**/*}'] +
-                        %w(LICENCE README.md wtf-tools.gemspec)
+                        %w(LICENSE README.md wtf-tools.gemspec)
   s.require_path    = 'lib'
   s.test_files      = Dir['test/*.rb']
 

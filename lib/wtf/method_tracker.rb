@@ -35,7 +35,7 @@ module WTF
       attr_accessor :stats, :stack, :last_time, :last_heap
 
       def reset_state
-        self.stats = Hash.new { |h,k| h[k] = { freq: 0, time: 0.0, heap: 0 } }
+        self.stats = Hash.new { |h,k| h[k] = { :freq => 0, :time => 0.0, :heap => 0 } }
         self.stack = [[nil, :top]]
         self.last_time = AbsoluteTime.now
         self.last_heap = GC.stat[:heap_length]
@@ -78,9 +78,8 @@ module WTF
         data = data.sort_by(&:fourth).reverse
         data.unshift(%w(class method count time heap_mb))
 
-        dirs = FileUtils.mkdir_p("#{Rails.root}/log/wtf")
         time = Time.now.strftime('%m%d_%H%M%S')
-        File.write("#{dirs.first}/track_#{time}_#{rand(10000)}.csv", data.map(&:to_csv).join)
+        File.write("#{WTF.files_path}/track_#{time}_#{rand(10000)}.csv", data.map(&:to_csv).join)
       end
     end
   end

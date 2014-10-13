@@ -60,17 +60,17 @@ module WTF
         (Thread.current[:wtf] ||= []) << data
       when options[:file]
         time = Time.now.strftime('%m%d_%H%M%S')
-        file = "#{Rails.root}/log/wtf/wtf_#{time}_#{rand(10000)}.txt"
+        file = "#{WTF.files_path}/wtf_#{time}_#{rand(10000)}.txt"
         File.write(file, data)
       when options[:raise]
         raise StandardError, data
       when options[:redis]
-        RS.rpush('wtf', data)
-        RS.expire('wtf', 30*60)
+        WTF.options[:redis].rpush('wtf', data)
+        WTF.options[:redis].expire('wtf', 30*60)
       when options[:log]
         Rails.logger.info(data)
       else
-        APPLOG.info(data)
+        WTF.options[:default].info(data)
       end
     end
 
