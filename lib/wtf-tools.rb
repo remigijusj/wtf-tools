@@ -18,8 +18,7 @@ module WTF
 
     # TODO: separately track ActiveRecord finders usage in the related methods
     def track(*objects)
-      WTF::MethodTracker.setup_tracking(*objects)
-      WTF::MethodTracker.reset_state
+      WTF::MethodTracker.start_tracking(*objects)
       if block_given?
         yield
         track_finish

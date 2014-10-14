@@ -1,11 +1,14 @@
 module WTF
   module MethodTracker
     class << self
-      def setup_tracking(*objects)
+      def start_tracking(*objects)
+        require 'absolute_time'
+
         objects.each do |object|
           klass = object.is_a?(Module) ? object : object.class
           prepare(klass)
         end
+        reset_state
       end
 
       def prepare(base)
