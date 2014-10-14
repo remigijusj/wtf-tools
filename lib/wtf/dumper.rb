@@ -46,7 +46,7 @@ module WTF
       when options[:text]
         args.map(&:to_s).join("\n")
       when options[:line]
-        args.map(&:inspect).join("\n")
+        args.map(&:inspect).join("\n  ")
       when options[:csv]
         args[0].map(&:to_csv).join
       else

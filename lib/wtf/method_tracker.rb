@@ -75,7 +75,7 @@ module WTF
         data = stats.map do |key, val|
           [*key, val[:freq].to_i, val[:time].to_f.round(3), (val[:heap].to_f / 64).round(3)]
         end
-        data = data.sort_by(&:fourth).reverse
+        data = data.sort_by {|it| it[3] }.reverse
         data.unshift(%w(class method count time heap_mb))
 
         time = Time.now.strftime('%m%d_%H%M%S')
