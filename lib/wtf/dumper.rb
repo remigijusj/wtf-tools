@@ -69,8 +69,10 @@ module WTF
         WTF.options[:redis].expire('wtf', 30*60)
       when options[:log]
         Rails.logger.info(data)
-      else
+      when WTF.options[:default]
         WTF.options[:default].info(data)
+      else
+        puts data
       end
     end
 
