@@ -28,11 +28,24 @@ module WTF
     def track_finish
       WTF::MethodTracker.finish
     end
+
+    def time(*args)
+      require 'absolute_time'
+
+      precision = args.shift if args.first.is_a?(Fixnum)
+      precision ||= 3
+      before = AbsoluteTime.now
+      result = yield
+      duration = AbsoluteTime.now - before
+      WTF::Dumper.new(duration.round(precision), *args)
+      result
+    end
   end
 end
 
 Object.class_eval do
   def WTF?(*args)
     WTF::Dumper.new(*args)
+    nil
   end
 end

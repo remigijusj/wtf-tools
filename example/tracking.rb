@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'wtf-tools'
-require 'absolute_time'
 require 'fileutils'
 require 'csv'
 

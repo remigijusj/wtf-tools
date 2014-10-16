@@ -3,22 +3,24 @@ require 'wtf-tools'
 require 'pp'
 require 'json'
 require 'yaml'
-require 'logger'
+require 'active_support/logger'
 require 'fileutils'
 
 WTF.options = {
-  :default => Logger.new('./example.log'),
+  :default => ActiveSupport::Logger.new('./example.log'),
   :files => './wtf',
 }
 
-WTF? 1, Object.new
+data = { 'some' => { 'nested' => { 'data' => 17 } }, :question => %w(life universe and everything), :answer => 42 }
 
-WTF? 2, :some, "string", 17, :time
+WTF? Time.now
 
-WTF? 3, :file
+WTF? :label, "string", 17, 2.0001, :time, :nl
 
-WTF? 4, { :some => 'data', :other => %w(array of items) }, :pp
+WTF? 'label', "string", 17, 2.0001, :time, :line, :nl
 
-WTF? 5, { :some => 'data', :other => %w(array of items) }, :json, :nl
+WTF? data, :pp, :nl
 
-WTF? 6, { :some => 'data', :other => %w(array of items) }, :yaml, :no, :file
+WTF? data, :json, :nl
+
+WTF? data, :yaml, :no, :file
