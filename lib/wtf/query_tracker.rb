@@ -1,5 +1,5 @@
 module WTF
-  module SqlTracker
+  module QueryTracker
     class << self
       attr_reader :trackable
 
@@ -15,7 +15,7 @@ module WTF
         ActiveRecord::ConnectionAdapters::AbstractAdapter.module_eval %{
           module TrackingSQL
             def log(sql, *args, &block)
-              WTF::SQLTracker.on_sql(sql)
+              WTF::QueryTracker.on_sql(sql)
               super(sql, *args, &block)
             end
           end
