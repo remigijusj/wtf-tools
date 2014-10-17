@@ -1,5 +1,6 @@
 require 'wtf/dumper'
 require 'wtf/method_tracker'
+require 'wtf/sql_tracker'
 
 module WTF
   class << self
@@ -27,6 +28,10 @@ module WTF
 
     def track_finish
       WTF::MethodTracker.finish
+    end
+
+    def sql(sql)
+      WTF::SqlTracker.start_tracking(sql)
     end
 
     def time(*args)
