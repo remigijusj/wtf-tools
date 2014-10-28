@@ -15,7 +15,7 @@ Library requirements for specific options are documented below.
 Usage examples
 --------------
 
-### Data dumper
+### Data dumping
 
 ```ruby
 WTF? my_var                                   # basic
@@ -27,8 +27,8 @@ Supported options
 
 ```
 Prefix
-  (default)  just ...
-  :time      add timestamp: [2014-10-28 12:33:11 +0200]
+  (default)  WTF (my_file_name/method_name:227): 
+  :time      with timestamp: [2014-10-28 12:33:11 +0200]
   :nl        new line before the record
   :no        no prefix at all
 
@@ -43,17 +43,27 @@ Formatting
   :bare      modifier, ActiveRecord with just id attributs: #<MyClass id: 1234>
 
 Output control
-  (default)  to the configured logfile (see below)
+  (default)  to the chosen logger (see configuration)
   :log       to Rails default logger
   :file      to a separate file in configured location
-  :page      to a thread variable
-  :redis     to a Redis list value
-  :raise     raise serialized string as exception
+  :page      to a thread variable Thread.current[:wtf]
+  :redis     to a Redis list on key 'wtf', expiring in 30min
+  :raise     raise the string containing data as exception
 ```
 
 ---
 
 ### Code timing
+
+```ruby
+class MyClass
+  def run_something
+    WTF.time {
+      # your code
+    }
+  end
+end
+```
 
 ---
 
@@ -62,7 +72,7 @@ Output control
 ```ruby
 class MyClass
   def run_something
-    WTF.track(self)
+    WTF.track(self, OtherClass)
     # lots of code
     WTF.track_finish
   end
@@ -70,7 +80,13 @@ end
 ```
 
 This will create a CSV file in configured location, containing profiling info.
-Profiling happens only in the calling class methods. Example:
+Profiling happens only in the methods of the calling class, and other given class.
+
+How it works: every method in `MyClass` and `OtherClass` is overridden, adding resource timing code.
+All calls to those methods from the code between `track` and `track_finish` are measured (time and memory),
+and sum amounts are output at the end, sorted by total time used.
+
+Example output:
 
 ```csv
 class,method,count,time,heap_mb
@@ -81,6 +97,9 @@ Overview,load_data,1,0.166,0.0
 ...
 ```
 
+Requirements: Ruby 2.0, because the technique used involves module `prepend`-ing, which is not available in Ruby 1.9.
+Warning: tracking method calls adds time overhead (somewhere from 10% to 3x, depending on number of times the methods were called).
+
 ---
 
 ### SQL tracking
@@ -89,12 +108,13 @@ Overview,load_data,1,0.166,0.0
 class MyClass
   def run_something
     WTF.sql %q{SELECT * FROM `my_records` WHERE `attribute`='value' AND `etc`}
+    WTF.sql %q{UPDATE `my_records` SET `some_values`=NULL}
     # lots of code
   end
 end
 ```
 
-This will add a WTF?-style dump in default location, containing stacktrace from the location where given SQL statement was generated. SQL ic checked as exact string equality.
+This will add a `WTF?`-style dump in the default location, containing stacktrace where given SQL statement was generated. SQL must match exactly as strings.
 
 ---
 
@@ -102,7 +122,7 @@ This will add a WTF?-style dump in default location, containing stacktrace from 
 Configuration
 -------------
 
-Configure WTF module before using the above-mentioned facilities. Rails initializers are good place for it.
+Configure WTF before using the above-mentioned facilities. Rails initializer dir is a good place for it.
 
 ```ruby
 WTF.options = {
@@ -116,7 +136,7 @@ require 'yaml' # to use :yaml option, etc
 
 ---
 
-Licence
+License
 -------
 
-MIT
+This is released under the [MIT License](http://www.opensource.org/licenses/MIT).
