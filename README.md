@@ -158,4 +158,5 @@ Sponsors
 -------
 
 This gem is sponsored and used by [SameSystem](http://www.samesystem.com)
+
 ![SameSystem](http://www.samesystem.com/assets/logo_small.png)
