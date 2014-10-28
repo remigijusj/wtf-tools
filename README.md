@@ -9,7 +9,7 @@ Some tools for debugging and profiling Ruby on Rails projects. Included:
 * SQL tracker - detect where exactly given SQL query originated from
 
 User is responsible for requiring gems necessary for rendering output. 
-For example, when :yaml option is used with `WTF?`, we expect that `YAML` is already loaded.
+For example, when `:yaml` option is used with `WTF?`, we expect that `YAML` is already loaded.
 Library requirements for specific options are documented below.
 
 Usage examples
@@ -65,6 +65,12 @@ class MyClass
 end
 ```
 
+Output:
+
+```
+WTF (my_class/run_something:3): 0.001
+```
+
 ---
 
 ### Method tracking
@@ -72,19 +78,25 @@ end
 ```ruby
 class MyClass
   def run_something
-    WTF.track(self, OtherClass)
+    WTF.track(self)
     # lots of code
     WTF.track_finish
   end
 end
 ```
 
-This will create a CSV file in configured location, containing profiling info.
-Profiling happens only in the methods of the calling class, and other given class.
+Additionally, extra classes/modules can be given:
 
-How it works: every method in `MyClass` and `OtherClass` is overridden, adding resource timing code.
-All calls to those methods from the code between `track` and `track_finish` are measured (time and memory),
-and sum amounts are output at the end, sorted by total time used.
+```
+WTF.track(self, OtherClass, Helpers)
+```
+
+This will create a CSV file in configured location, containing profiling info.
+Profiling happens only in the methods of the calling class, and any other given class.
+
+How it works: every method in `MyClass` and `OtherClass` is overridden, adding resource measuring code.
+All calls to those methods from the code between `track` and `track_finish` are measured (time and memory).
+Sum amounts are written as CSV file, sorted by total time used.
 
 Example output:
 
@@ -97,8 +109,7 @@ Overview,load_data,1,0.166,0.0
 ...
 ```
 
-Requirements: Ruby 2.0, because the technique used involves module `prepend`-ing, which is not available in Ruby 1.9.
-Warning: tracking method calls adds time overhead (somewhere from 10% to 3x, depending on number of times the methods were called).
+*Warning:* tracking method calls adds time overhead (somewhere from 10% to 3x, depending on number of times the methods were called).
 
 ---
 
@@ -122,7 +133,7 @@ This will add a `WTF?`-style dump in the default location, containing stacktrace
 Configuration
 -------------
 
-Configure WTF before using the above-mentioned facilities. Rails initializer dir is a good place for it.
+Configure WTF before using the above-mentioned facilities. Rails initializers directory is a good place for it.
 
 ```ruby
 WTF.options = {
@@ -134,9 +145,17 @@ WTF.options = {
 require 'yaml' # to use :yaml option, etc
 ```
 
+*Requirement:* Ruby 2.0, because the technique used involves module `prepend`-ing, which is not available in Ruby 1.9.
+
 ---
 
 License
 -------
 
 This is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+
+Sponsors
+-------
+
+This gem is sponsored and used by [SameSystem](http://www.samesystem.com)
+![SameSystem](http://www.samesystem.com/assets/logo_small.png)
