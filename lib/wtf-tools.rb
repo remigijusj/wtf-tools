@@ -30,8 +30,8 @@ module WTF
       WTF::MethodTracker.finish
     end
 
-    def sql(sql)
-      WTF::QueryTracker.start_tracking(sql)
+    def sql(*args)
+      WTF::QueryTracker.start_tracking(*args)
     end
 
     def time(*args)

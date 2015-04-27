@@ -1,14 +1,16 @@
 module WTF
   module QueryTracker
-    class << self
-      attr_reader :trackable
+    Trackable = Struct.new(:pattern, :options)
 
-      def start_tracking(sql)
-        if @trackable.nil?
+    class << self
+      attr_reader :trackables
+
+      def start_tracking(pattern, options = {})
+        if @trackables.nil?
           prepare_hook
-          @trackable = {}
+          @trackables = []
         end
-        @trackable[sql] = true
+        @trackables << Trackable.new(pattern, options)
       end
 
       def prepare_hook
@@ -24,8 +26,21 @@ module WTF
       end
 
       def on_sql(sql)
-        if trackable[sql]
-          WTF::Dumper.new(:sql, sql, *caller.take(30), :line)
+        trackables.each do |it|
+          if match(it.pattern, sql)
+            WTF::Dumper.new(:sql, sql, *caller.take(it.options[:size] || 30), :line)
+          end
+        end
+      end
+
+      def match(pattern, sql)
+        case pattern
+        when Regexp
+          pattern.match(sql)
+        when String
+          pattern == sql
+        when Proc
+          pattern.call(sql)
         end
       end
     end

@@ -119,7 +119,7 @@ Overview,load_data,1,0.166,0.0
 class MyClass
   def run_something
     WTF.sql %q{SELECT * FROM `my_records` WHERE `attribute`='value' AND `etc`}
-    WTF.sql %q{UPDATE `my_records` SET `some_values`=NULL}
+    WTF.sql /^UPDATE `my_records` SET .*?`some_values`=/, size: 10
     # lots of code
   end
 end
