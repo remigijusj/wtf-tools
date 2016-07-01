@@ -21,6 +21,7 @@ Usage examples
 WTF? my_var                                   # basic
 WTF? my_var, other_var, { some: data }, :pp   # more data, option: pretty-print
 WTF? :label, records, :bare, :time            # multiple options given
+data.wtf(:time).some_method                   # inline call
 ```
 
 Supported options

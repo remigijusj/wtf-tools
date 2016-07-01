@@ -53,4 +53,9 @@ Object.class_eval do
     WTF::Dumper.new(*args)
     nil
   end
+
+  def wtf(*args)
+    WTF::Dumper.new(self, *args)
+    self
+  end
 end
