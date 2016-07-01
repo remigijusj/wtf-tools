@@ -9,7 +9,9 @@ WTF.time {
 
 # logging time with specified precision and options
 WTF.options = {
-  :default => ActiveSupport::Logger.new('./example.log'),
+  output: {
+    default: ActiveSupport::Logger.new('./example.log'),
+  }
 }
 result = WTF.time(4, :nl) {
   sleep 3.12346

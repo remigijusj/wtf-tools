@@ -44,13 +44,9 @@ Formatting
   :bare      modifier, ActiveRecord with just id attributs: #<MyClass id: 1234>
 
 Output control
-  (default)  to the chosen logger (see configuration)
-  :log       to Rails default logger
+  :puts      to STDOUT (default)
   :file      to a separate file in configured location
-  :page      to a thread variable Thread.current[:wtf]
-  :puts      to STDOUT
-  :redis     to a Redis list on key 'wtf', expiring in 30min
-  :raise     raise the string containing data as exception
+  :error     raise the string containing data as exception
 ```
 
 ---

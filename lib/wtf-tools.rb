@@ -13,8 +13,16 @@ module WTF
     end
 
     def files_path
-      dirs = FileUtils.mkdir_p(options[:files])
-      dirs.first
+      if options[:files]
+        dirs = FileUtils.mkdir_p(options[:files])
+        dirs.first
+      else
+        Dir.getwd
+      end
+    end
+
+    def output_options
+      Hash(options[:output])
     end
 
     # TODO: separately track ActiveRecord finders usage in the related methods
@@ -42,7 +50,7 @@ module WTF
       before = AbsoluteTime.now
       result = yield
       duration = AbsoluteTime.now - before
-      WTF::Dumper.new(duration.round(precision), *args)
+      WTF::Dumper.new(duration.round(precision), *args).call
       result
     end
   end
@@ -50,12 +58,12 @@ end
 
 Object.class_eval do
   def WTF?(*args)
-    WTF::Dumper.new(*args)
+    WTF::Dumper.new(*args).call
     nil
   end
 
   def wtf(*args)
-    WTF::Dumper.new(self, *args)
+    WTF::Dumper.new(self, *args).call
     self
   end
 end

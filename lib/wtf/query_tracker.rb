@@ -28,7 +28,7 @@ module WTF
       def on_sql(sql)
         trackables.each do |it|
           if match(it.pattern, sql)
-            WTF::Dumper.new(:sql, sql, *caller.take(it.options[:size] || 30), :line)
+            WTF::Dumper.new(:sql, sql, *caller.take(it.options[:size] || 30), :line).call
           end
         end
       end

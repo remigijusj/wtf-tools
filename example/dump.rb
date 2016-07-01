@@ -7,8 +7,10 @@ require 'active_support/logger'
 require 'fileutils'
 
 WTF.options = {
-  :default => ActiveSupport::Logger.new('./example.log'),
-  :files => './wtf',
+  files: './wtf',
+  output: {
+    default: ActiveSupport::Logger.new('./example.log'),
+  }
 }
 
 data = { 'some' => { 'nested' => { 'data' => 17 } }, :question => %w(life universe and everything), :answer => 42 }

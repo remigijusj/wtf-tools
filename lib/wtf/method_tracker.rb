@@ -82,7 +82,8 @@ module WTF
         data.unshift(%w(class method count time heap_mb))
 
         time = Time.now.strftime('%m%d_%H%M%S')
-        File.write("#{WTF.files_path}/track_#{time}_#{rand(10000)}.csv", data.map(&:to_csv).join)
+        file = File.join(WTF.files_path, "track_#{time}_#{rand(10000)}.csv")
+        File.write(file, data.map(&:to_csv).join)
       end
     end
   end
