@@ -1,6 +1,6 @@
-require 'wtf/dumper'
-require 'wtf/method_tracker'
-require 'wtf/query_tracker'
+require_relative 'wtf/dumper'
+require_relative 'wtf/method_tracker'
+require_relative 'wtf/query_tracker'
 
 module WTF
   class << self

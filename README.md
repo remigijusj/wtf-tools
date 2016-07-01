@@ -41,7 +41,8 @@ Formatting
   :csv       CSV format,   require 'csv'
   :text      simple Ruby to_s
   :line      modifier, each object in separate line
-  :bare      modifier, ActiveRecord with just id attributs: #<MyClass id: 1234>
+  :bare      modifier, ActiveRecord with just id attributes: #<MyClass id: 1234>
+  :name      like :line, but with names taken from source file
 
 Output control
   :puts      to STDOUT (default)

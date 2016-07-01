@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name            = 'wtf-tools'
-  s.version         = '1.0.3'
+  s.version         = '1.0.4'
   s.date            = '2016-07-01'
   s.platform        = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new(">= 2.0.0")

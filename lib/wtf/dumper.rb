@@ -2,7 +2,7 @@ module WTF
   class Dumper
     PREFIX_OPTIONS = [:time, :nl, :np].freeze
     FORMAT_OPTIONS = [:pp, :yaml, :json, :text, :line, :csv].freeze
-    MODIFY_OPTIONS = [:bare].freeze
+    MODIFY_OPTIONS = [:bare, :name].freeze
     OUTPUT_OPTIONS = [:puts, :error, :file].freeze
 
     OPTIONS = (PREFIX_OPTIONS + FORMAT_OPTIONS + MODIFY_OPTIONS + OUTPUT_OPTIONS).freeze
@@ -18,7 +18,8 @@ module WTF
     end
 
     def call
-      data = prefix(args) << format(args)
+      where, names = parse_source(caller[1])
+      data = prefix(where) << format(names)
       output(data)
     end
 
@@ -28,21 +29,42 @@ module WTF
       OPTIONS.include?(sym) or WTF.output_options.key?(sym)
     end
 
-    def prefix(args)
+    def prefix(where)
       data = ''
       data << "\n" if options[:nl]
       data << "[%s] " % Time.now if options[:time]
       return data if options[:np]
-      data << if args[0].is_a?(Symbol)
+      data << if args.first.is_a?(Symbol)
         args.shift.to_s.upcase
       else
-        pattern = %r{([^/]+?)(?:\.rb)?:(\d+):in `(.*)'$}  # '
-        "WTF (%s/%s:%s)" % caller[3].match(pattern).values_at(1,3,2)
+        "WTF (#{where})"
       end
       data << ': '
     end
 
-    def format(args)
+    def parse_source(item)
+      md = item.match(%r{^(.*?([^/]+?)(?:\.rb)?):(\d+):in `(.*)'$})
+      where = '%s/%s:%s' % md.values_at(2, 4, 3)
+      names = parse_names(read_source(md[1], md[3].to_i)) if options[:name]
+      [where, names]
+    end
+
+    def read_source(file, line)
+      File.open(file).each_line.lazy.take(line).to_a[line-1]
+    end
+
+    def parse_names(source)
+      return nil unless source
+      md = source.match(/(\.wtf\(|WTF\?\(?)(.*?)\s*(?:if |unless |$)/)
+      return nil unless md
+      names = md[2].split(',').map(&:strip) # naive
+      names.unshift('self') if md[1] == '.wtf('
+      names
+    end
+
+    def format(names)
+      return format_with_names(names) if names
+
       case
       when options[:pp]
         cleanup(args.pretty_inspect, options[:bare])
@@ -55,9 +77,17 @@ module WTF
       when options[:line]
         args.map(&:inspect).join("\n  ")
       when options[:csv]
-        args[0].map(&:to_csv).join
+        args.first.map(&:to_csv).join
       else
         cleanup(args.inspect, options[:bare])
+      end
+    end
+
+    def format_with_names(names)
+      len = names.map(&:length).max
+      args.each_with_object('').with_index do |(arg, data), i|
+        name = names[i] || '?'
+        data << "\n" << "  %-#{len}s => %s" % [name, arg.inspect]
       end
     end
 
@@ -72,8 +102,9 @@ module WTF
     def output(data)
       selected = (OUTPUT_OPTIONS + WTF.output_options.keys).select { |how| options[how] }
       selected << :default if selected.empty?
+      proxy = Output.new(data)
       selected.each do |how|
-        Output.new(data).call(how)
+        proxy.call(how)
       end
     end
 
@@ -86,7 +117,7 @@ module WTF
 
       def call(meth)
         if block = WTF.output_options[meth]
-          block.call(meth)
+          block.call(data)
         else
           send(meth)
         end
