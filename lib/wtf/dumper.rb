@@ -4,7 +4,7 @@ module WTF
       :time, :nl, :no,                       # prefix
       :pp, :yaml, :json, :text, :line, :csv, # format
       :bare,                                 # modify
-      :page, :file, :raise, :redis, :log,    # output
+      :page, :puts, :file, :raise, :redis, :log, # output
     ].freeze
 
     attr_reader :options
@@ -67,6 +67,8 @@ module WTF
       when options[:redis]
         WTF.options[:redis].rpush('wtf', data)
         WTF.options[:redis].expire('wtf', 30*60)
+      when options[:puts]
+        STDOUT.puts data
       when options[:log]
         Rails.logger.info(data)
       when WTF.options[:default]

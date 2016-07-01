@@ -48,6 +48,7 @@ Output control
   :log       to Rails default logger
   :file      to a separate file in configured location
   :page      to a thread variable Thread.current[:wtf]
+  :puts      to STDOUT
   :redis     to a Redis list on key 'wtf', expiring in 30min
   :raise     raise the string containing data as exception
 ```
