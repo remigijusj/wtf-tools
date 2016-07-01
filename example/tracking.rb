@@ -4,7 +4,7 @@ require 'fileutils'
 require 'csv'
 
 WTF.options = {
-  :files => './wtf',
+  files: './wtf',
 }
 
 class Sample

@@ -38,7 +38,7 @@ module WTF
       attr_accessor :stats, :stack, :last_time, :last_heap
 
       def reset_state
-        self.stats = Hash.new { |h,k| h[k] = { :freq => 0, :time => 0.0, :heap => 0 } }
+        self.stats = Hash.new { |h,k| h[k] = { freq: 0, time: 0.0, heap: 0 } }
         self.stack = [[nil, :top]]
         self.last_time = AbsoluteTime.now
         self.last_heap = GC.stat[:heap_length]

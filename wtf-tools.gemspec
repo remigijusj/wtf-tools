@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name            = 'wtf-tools'
-  s.version         = '1.0.2'
-  s.date            = '2014-10-14'
+  s.version         = '1.0.3'
+  s.date            = '2016-07-01'
   s.platform        = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new(">= 2.0.0")
   s.summary         = 'tools for debugging and profiling Ruby on Rails projects'

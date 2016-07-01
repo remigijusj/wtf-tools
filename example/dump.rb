@@ -25,6 +25,6 @@ WTF? data, :pp, :nl
 
 WTF? data, :json, :nl
 
-WTF? data, :yaml, :no, :file
+WTF? data, :yaml, :np, :file
 
 data.wtf(:file).size

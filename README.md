@@ -29,9 +29,9 @@ Supported options
 ```
 Prefix
   (default)  WTF (my_file_name/method_name:227): 
-  :time      with timestamp: [2014-10-28 12:33:11 +0200]
+  :np        no default prefix
   :nl        new line before the record
-  :no        no prefix at all
+  :time      with timestamp: [2014-10-28 12:33:11 +0200]
 
 Formatting
   (default)  simple Ruby inspect
@@ -131,13 +131,17 @@ This will add a `WTF?`-style dump in the default location, containing stacktrace
 Configuration
 -------------
 
-Configure WTF before using the above-mentioned facilities. Rails initializers directory is a good place for it.
+Configure WTF before using the above-mentioned facilities.
+Rails initializers directory is a good place to put it.
+Subkeys of `output` must be lambdas taking one string argument. They are merged into default output options.
 
 ```ruby
 WTF.options = {
-  default: Rails.logger,
   files:   "#{Rails.root}/log/wtf",
-  redis:   Redis.new,
+  output: {
+    default: ->(data) { Rails.logger.info(data) },
+    redis:   ->(data) { Redis.new.rpush(:wtf, data) },
+  }
 }
 
 require 'yaml' # to use :yaml option, etc

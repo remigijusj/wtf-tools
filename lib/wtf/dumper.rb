@@ -1,15 +1,16 @@
 module WTF
   class Dumper
-    PREFIX_OPTIONS = [:time, :nl, :no].freeze
+    PREFIX_OPTIONS = [:time, :nl, :np].freeze
     FORMAT_OPTIONS = [:pp, :yaml, :json, :text, :line, :csv].freeze
     MODIFY_OPTIONS = [:bare].freeze
     OUTPUT_OPTIONS = [:puts, :error, :file].freeze
 
     OPTIONS = (PREFIX_OPTIONS + FORMAT_OPTIONS + MODIFY_OPTIONS + OUTPUT_OPTIONS).freeze
 
-    attr_reader :options
+    attr_reader :args, :options
 
     def initialize(*args)
+      @args = args
       @options = {}
       while is_option?(args.last)
         @options[args.pop] = true
@@ -29,9 +30,9 @@ module WTF
 
     def prefix(args)
       data = ''
-      return data if options[:no]
       data << "\n" if options[:nl]
       data << "[%s] " % Time.now if options[:time]
+      return data if options[:np]
       data << if args[0].is_a?(Symbol)
         args.shift.to_s.upcase
       else
